@@ -19,10 +19,10 @@
     libnotify
     gawk
     sudo
-    gnome.gnome-software
-    gnome.gnome-calculator
-    gnome.gnome-calendar
-    gnome.gnome-screenshot
+    gnome-software
+    gnome-calculator
+    gnome-calendar
+    gnome-screenshot
     flatpak
     xdg-desktop-portal
     xdg-desktop-portal-gtk
