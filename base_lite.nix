@@ -20,9 +20,9 @@
     libnotify
     gawk
     sudo
-    gnome-calculator
-    gnome-calendar
-    gnome-screenshot
+    gnome.gnome-calculator
+    gnome.gnome-calendar
+    gnome.gnome-screenshot
   ];
 
   system.autoUpgrade = {
