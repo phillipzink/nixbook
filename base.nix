@@ -66,14 +66,6 @@
       # Flatpak Updates
       ${pkgs.coreutils-full}/bin/nice -n 19 ${pkgs.util-linux}/bin/ionice -c 3 ${pkgs.flatpak}/bin/flatpak update --noninteractive --assumeyes
 
-      # Sync Nix Channel with autoupdate config
-      # current_channel="$(sudo ${pkgs.nix}/bin/nix-channel --list | ${pkgs.gnugrep}/bin/grep '^nixos ' | ${pkgs.gawk}/bin/awk '{print $2}')"
-      # autoupdate_channel="$(sudo ${pkgs.nix}/bin/nix-instantiate --eval '<nixpkgs/nixos>' -a config.system.autoupgrade.channel | tr -d '"')"
-      
-      #if [ "$current_channel" != "$autoupdate_channel" ]; then
-      #  sudo ${pkgs.nix}/bin/nix-channel --add "${autoupdate_channel}" nixos
-      #fi
-
       # Notify users if update or reboot hasn't been applied in 25 days
       last_gen_time=$(${pkgs.nix}/bin/nix-env --list-generations --profile /nix/var/nix/profiles/system | ${pkgs.gawk}/bin/awk 'END {print $2, $3}')
       last_gen_sec=$(date -d "$last_gen_time" +%s)
