@@ -5,6 +5,8 @@ if [[ "$answer" =~ ^[Yy]$ ]]; then
   echo "Updating Nixbook..."
 
   # Download the latest nixbook changes
+  sudo git -C /etc/nixbook reset --hard
+  sudo git -C /etc/nixbook clean -fd
   sudo git -C /etc/nixbook pull
 
   # Update the nixos nix-channel to be the same as config.system.autoUpgrade.channel in base.nix or base_lite.nix

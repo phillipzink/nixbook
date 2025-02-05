@@ -18,6 +18,7 @@
     firefox
     libnotify
     gawk
+    gnugrep
     sudo
     gnome.gnome-software
     gnome.gnome-calculator
@@ -56,21 +57,27 @@
   systemd.services."auto-update-config" = {
     script = ''
       set -eu
+
+      # Update nixbook configs
       ${pkgs.coreutils-full}/bin/nice -n 19 ${pkgs.util-linux}/bin/ionice -c 3 ${pkgs.git}/bin/git -C /etc/nixbook reset --hard
       ${pkgs.coreutils-full}/bin/nice -n 19 ${pkgs.util-linux}/bin/ionice -c 3 ${pkgs.git}/bin/git -C /etc/nixbook clean -fd
       ${pkgs.coreutils-full}/bin/nice -n 19 ${pkgs.util-linux}/bin/ionice -c 3 ${pkgs.git}/bin/git -C /etc/nixbook pull
+
+      # Flatpak Updates
       ${pkgs.coreutils-full}/bin/nice -n 19 ${pkgs.util-linux}/bin/ionice -c 3 ${pkgs.flatpak}/bin/flatpak update --noninteractive --assumeyes
 
-      # Get the timestamp of the current generation
+      # Sync Nix Channel with autoupdate config
+      current_channel="$(sudo ${pkgs.nix}/bin/nix-channel --list | ${pkgs.gnugrep}/bin/grep '^nixos ' | ${pkgs.gawk}/bin/awk '{print $2}')"
+      autoupdate_channel="$(sudo ${pkgs.nix}/bin/nix-instantiate --eval '<nixpkgs/nixos>' -a config.system.autoupgrade.channel | tr -d '"')"
+      
+      if [ "$current_channel" != "$autoupdate_channel" ]; then
+        sudo ${pkgs.nix}/bin/nix-channel --add "${autoupdate_channel}" nixos
+      fi
+
+      # Notify users if update or reboot hasn't been applied in 25 days
       last_gen_time=$(${pkgs.nix}/bin/nix-env --list-generations --profile /nix/var/nix/profiles/system | ${pkgs.gawk}/bin/awk 'END {print $2, $3}')
-  
-      # Convert the timestamp to seconds since epoch
       last_gen_sec=$(date -d "$last_gen_time" +%s)
-
-      # Get the current time in seconds since epoch
       now=$(date +%s)
-
-      # Calculate the difference in days
       days_since_last_gen=$((($now - $last_gen_sec) / 86400))
 
       if [ "$days_since_last_gen" -gt 25 ]; then
