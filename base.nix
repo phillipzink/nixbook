@@ -13,6 +13,14 @@
   services.xserver.desktopManager.cinnamon.enable = true;
   xdg.portal.enable = true;
 
+  # Enable Printing
+  services.printing.enable = true;
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
   environment.systemPackages = with pkgs; [
     git
     firefox
