@@ -10,7 +10,9 @@ echo "Powerwashing NixBook..."
   
 
   # Erase data and set up home directory again
+  cp ~/.Xauthority /tmp/
   rm -rf ~/
+  mv /tmp/.Xauthority ~/
   mkdir ~/Desktop
   mkdir ~/Documents
   mkdir ~/Downloads
